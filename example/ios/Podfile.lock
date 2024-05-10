@@ -1,5 +1,10 @@
 PODS:
   - Flutter (1.0.0)
+  - flutter_secure_storage (6.0.0):
+    - Flutter
+  - path_provider_foundation (0.0.1):
+    - Flutter
+    - FlutterMacOS
   - wireguard_dart (0.0.1):
     - Flutter
     - FlutterMacOS
@@ -8,6 +13,8 @@ PODS:
 
 DEPENDENCIES:
   - Flutter (from `Flutter`)
+  - flutter_secure_storage (from `.symlinks/plugins/flutter_secure_storage/ios`)
+  - path_provider_foundation (from `.symlinks/plugins/path_provider_foundation/darwin`)
   - wireguard_dart (from `.symlinks/plugins/wireguard_dart/darwin`)
 
 SPEC REPOS:
@@ -17,14 +24,20 @@ SPEC REPOS:
 EXTERNAL SOURCES:
   Flutter:
     :path: Flutter
+  flutter_secure_storage:
+    :path: ".symlinks/plugins/flutter_secure_storage/ios"
+  path_provider_foundation:
+    :path: ".symlinks/plugins/path_provider_foundation/darwin"
   wireguard_dart:
     :path: ".symlinks/plugins/wireguard_dart/darwin"
 
 SPEC CHECKSUMS:
   Flutter: e0871f40cf51350855a761d2e70bf5af5b9b5de7
+  flutter_secure_storage: d33dac7ae2ea08509be337e775f6b59f1ff45f12
+  path_provider_foundation: 2b6b4c569c0fb62ec74538f866245ac84301af46
   wireguard_dart: e9f4586e6433f14a16864e80abbdb63239e1aa12
   WireGuardKit: 8b9e7f28441b67aafe60d59c15b8c70bed5ab092
 
 PODFILE CHECKSUM: ade4dc95c753c461e86203a02270c4756b4c2b1a
 
-COCOAPODS: 1.14.3
+COCOAPODS: 1.15.2
