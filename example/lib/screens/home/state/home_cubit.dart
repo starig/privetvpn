@@ -8,7 +8,6 @@ import 'package:wireguard_dart/wireguard_dart.dart';
 import 'package:wireguard_dart_example/config/api.dart';
 import 'package:wireguard_dart_example/config/colors.dart';
 import 'package:wireguard_dart_example/config/constants.dart';
-import 'package:wireguard_dart_example/config/storage.dart';
 import 'package:wireguard_dart_example/data/models/server_item/server_item.dart';
 import 'package:wireguard_dart_example/screens/home/home_model.dart';
 
@@ -91,7 +90,7 @@ class HomeCubit extends Cubit<HomeState> {
     // late WireguardItem? wireguardItem;
 
     if (state.selectedServer != null) {
-      final String? uid = await LocalStorage().storage.read(key: StorageConstants().idToken);
+      // final String? uid = await LocalStorage().storage.read(key: StorageConstants().idToken);
 
       // try {
       //   Response response = await PrivetAPI()
@@ -110,7 +109,7 @@ class HomeCubit extends Cubit<HomeState> {
       try {
         // replace with valid config file before running
         await plugin.connect(cfg: """
-[Interface]
+        [Interface]
 Address = 192.168.6.17/32
 PrivateKey = ICaY4MQyA9HvswoSndrQNXmo65+JnU42Xf6NZ6TGKk0=
 DNS = 9.9.9.9,8.8.8.8
@@ -121,7 +120,7 @@ PresharedKey = NKNDce2yZsCkWHv21DALliygv4nuUt5zDSq8z0E78No=
 AllowedIPs = 0.0.0.0/0
 Endpoint = 213.226.100.9:41194
 PersistentKeepalive = 15
-      """);
+""");
         debugPrint("Connect success");
         setConnectedStatus();
       } catch (e) {
