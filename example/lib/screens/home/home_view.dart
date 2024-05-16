@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:wireguard_dart/connection_status.dart';
 import 'package:wireguard_dart/wireguard_dart.dart';
 import 'package:wireguard_dart_example/config/colors.dart';
 import 'package:wireguard_dart_example/screens/home/components/server_list_sheet/server_list_sheet.dart';
@@ -41,6 +42,7 @@ class _HomeViewState extends State<HomeView> {
 
   late final Future _getServersFuture;
   late final Future _checkConnectionFuture;
+  late Stream<ConnectionStatus> _statusStream;
 
   final _wireguardDartPlugin = WireguardDart();
 
@@ -73,9 +75,14 @@ class _HomeViewState extends State<HomeView> {
   @override
   void initState() {
     _getServersFuture = context.read<HomeCubit>().getServers();
-    _checkConnectionFuture = context.read<HomeCubit>().checkConnection(_wireguardDartPlugin);
+    // _checkConnectionFuture = context.read<HomeCubit>().checkConnection(_wireguardDartPlugin);
     initPlatformState();
     nativeInit();
+    _statusStream = _wireguardDartPlugin.statusStream();
+    _statusStream.listen((event) {
+      inspect(event);
+      context.read<HomeCubit>().setConnectionStatus(event.index);
+    });
     super.initState();
   }
 
@@ -133,86 +140,77 @@ class _HomeViewState extends State<HomeView> {
                     SizedBox(),
                     Column(
                       children: [
-                        FutureBuilder(
-                          future: _checkConnectionFuture,
-                          builder: (BuildContext context, snapshot) {
-                            if (snapshot.connectionState == ConnectionState.waiting) {
-                              return CircularProgressIndicator();
+                        GestureDetector(
+                          onTap: () async {
+                            context.read<HomeCubit>().listenVpnStatus();
+                            if (state.connectionState == VpnConnectionState.disconnected) {
+                              context.read<HomeCubit>().connectVPN(_wireguardDartPlugin);
                             } else {
-                              return GestureDetector(
-                                onTap: () async {
-                                  context.read<HomeCubit>().listenVpnStatus();
-                                  if (state.connectionState == VpnConnectionState.disconnected) {
-                                    context.read<HomeCubit>().connectVPN(_wireguardDartPlugin);
-                                  } else {
-                                    context.read<HomeCubit>().disconnectVPN(_wireguardDartPlugin);
-                                  }
-                                },
-                                child: Stack(
-                                  alignment: Alignment.center,
-                                  children: [
-                                    Container(
-                                      width: firstCircleSize,
-                                      height: firstCircleSize,
-                                      padding: const EdgeInsets.all(circlePadding),
-                                      decoration: BoxDecoration(
-                                        color: AppColors.defaultWhite,
-                                        borderRadius: BorderRadius.circular(firstCircleSize),
-                                        border: Border.all(
-                                          color: state.currentBorderColor,
-                                          width: circlePadding,
-                                        ),
-                                        boxShadow: [
-                                          BoxShadow(
-                                            color: AppColors.defaultWhite.withOpacity(0.5),
-                                            spreadRadius: state.connectionState ==
-                                                    VpnConnectionState.connected
-                                                ? 8
-                                                : 0,
-                                            blurRadius: 10,
-                                            offset: const Offset(0, 0),
-                                          ),
-                                        ],
-                                      ),
-                                      child: Container(
-                                        width: secondCircleSize,
-                                        height: secondCircleSize,
-                                        padding: const EdgeInsets.all(circlePadding),
-                                        decoration: BoxDecoration(
-                                          color: AppColors.defaultWhite,
-                                          borderRadius: BorderRadius.circular(secondCircleSize),
-                                          border: Border.all(
-                                            color: AppColors.circleBorderBold,
-                                            width: 3,
-                                          ),
-                                        ),
-                                        child: Container(
-                                          width: thirdCircleSize,
-                                          height: thirdCircleSize,
-                                          decoration: BoxDecoration(
-                                            color: AppColors.defaultWhite,
-                                            borderRadius: BorderRadius.circular(
-                                              secondCircleSize,
-                                            ),
-                                            border: Border.all(
-                                              color: AppColors.circleBorder,
-                                              width: 2,
-                                            ),
-                                          ),
-                                          child: Center(
-                                            child: SvgPicture.asset(
-                                              "assets/images/power.svg",
-                                              color: state.currentStatusColor,
-                                            ),
-                                          ),
-                                        ),
-                                      ),
-                                    )
-                                  ],
-                                ),
-                              );
+                              context.read<HomeCubit>().disconnectVPN(_wireguardDartPlugin);
                             }
                           },
+                          child: Stack(
+                            alignment: Alignment.center,
+                            children: [
+                              Container(
+                                width: firstCircleSize,
+                                height: firstCircleSize,
+                                padding: const EdgeInsets.all(circlePadding),
+                                decoration: BoxDecoration(
+                                  color: AppColors.defaultWhite,
+                                  borderRadius: BorderRadius.circular(firstCircleSize),
+                                  border: Border.all(
+                                    color: state.currentBorderColor,
+                                    width: circlePadding,
+                                  ),
+                                  boxShadow: [
+                                    BoxShadow(
+                                      color: AppColors.defaultWhite.withOpacity(0.5),
+                                      spreadRadius:
+                                          state.connectionState == VpnConnectionState.connected
+                                              ? 8
+                                              : 0,
+                                      blurRadius: 10,
+                                      offset: const Offset(0, 0),
+                                    ),
+                                  ],
+                                ),
+                                child: Container(
+                                  width: secondCircleSize,
+                                  height: secondCircleSize,
+                                  padding: const EdgeInsets.all(circlePadding),
+                                  decoration: BoxDecoration(
+                                    color: AppColors.defaultWhite,
+                                    borderRadius: BorderRadius.circular(secondCircleSize),
+                                    border: Border.all(
+                                      color: AppColors.circleBorderBold,
+                                      width: 3,
+                                    ),
+                                  ),
+                                  child: Container(
+                                    width: thirdCircleSize,
+                                    height: thirdCircleSize,
+                                    decoration: BoxDecoration(
+                                      color: AppColors.defaultWhite,
+                                      borderRadius: BorderRadius.circular(
+                                        secondCircleSize,
+                                      ),
+                                      border: Border.all(
+                                        color: AppColors.circleBorder,
+                                        width: 2,
+                                      ),
+                                    ),
+                                    child: Center(
+                                      child: SvgPicture.asset(
+                                        "assets/images/power.svg",
+                                        color: state.currentStatusColor,
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                              )
+                            ],
+                          ),
                         ),
                         SizedBox(
                           height: 20,

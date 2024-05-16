@@ -3,7 +3,6 @@ import 'dart:developer' as developer;
 import 'package:bloc/bloc.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
-import 'package:wireguard_dart/connection_status.dart';
 import 'package:wireguard_dart/wireguard_dart.dart';
 import 'package:wireguard_dart_example/config/api.dart';
 import 'package:wireguard_dart_example/config/colors.dart';
@@ -26,11 +25,15 @@ class HomeCubit extends Cubit<HomeState> {
           isGetServersPending: false,
         ));
 
-  Future<void> checkConnection(WireguardDart plugin) async {
-    final ConnectionStatus status = await plugin.status();
-    state.connectionState = status == ConnectionStatus.connected
-        ? VpnConnectionState.connected
-        : VpnConnectionState.disconnected;
+  void setConnectionStatus(int status) async {
+    switch (status) {
+      case 0:
+        setPendingStatus();
+      case 1:
+        setConnectedStatus();
+      case 2:
+        setDisconnectedStatus();
+    }
     emit(state.copyWith(connectionState: state.connectionState));
   }
 
@@ -122,7 +125,6 @@ Endpoint = 213.226.100.9:41194
 PersistentKeepalive = 15
 """);
         debugPrint("Connect success");
-        setConnectedStatus();
       } catch (e) {
         developer.log(
           'Connect',
