@@ -4,7 +4,7 @@ import 'package:flutter/widgets.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:wireguard_dart_example/config/colors.dart';
-import 'package:wireguard_dart_example/screens/home/state/home_cubit.dart';
+import 'package:wireguard_dart_example/features/home/state/home_cubit.dart';
 
 class ServerListSheet extends StatefulWidget {
   const ServerListSheet({super.key});

@@ -3,7 +3,10 @@
 #
 
 list(APPEND FLUTTER_PLUGIN_LIST
+  firebase_auth
+  firebase_core
   flutter_secure_storage_windows
+  permission_handler_windows
   wireguard_dart
 )
 

@@ -9,9 +9,9 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:wireguard_dart/connection_status.dart';
 import 'package:wireguard_dart/wireguard_dart.dart';
 import 'package:wireguard_dart_example/config/colors.dart';
-import 'package:wireguard_dart_example/screens/home/components/server_list_sheet/server_list_sheet.dart';
-import 'package:wireguard_dart_example/screens/home/home_model.dart';
-import 'package:wireguard_dart_example/screens/home/state/home_cubit.dart';
+import 'package:wireguard_dart_example/features/home/components/server_list_sheet/server_list_sheet.dart';
+import 'package:wireguard_dart_example/features/home/home_model.dart';
+import 'package:wireguard_dart_example/features/home/state/home_cubit.dart';
 
 class HomeView extends StatefulWidget {
   const HomeView({super.key});

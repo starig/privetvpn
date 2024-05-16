@@ -8,7 +8,7 @@ import 'package:wireguard_dart_example/config/api.dart';
 import 'package:wireguard_dart_example/config/colors.dart';
 import 'package:wireguard_dart_example/config/constants.dart';
 import 'package:wireguard_dart_example/data/models/server_item/server_item.dart';
-import 'package:wireguard_dart_example/screens/home/home_model.dart';
+import 'package:wireguard_dart_example/features/home/home_model.dart';
 
 part 'home_state.dart';
 

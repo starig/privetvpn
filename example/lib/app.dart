@@ -2,7 +2,7 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:wireguard_dart_example/screens/home/home_view.dart';
+import 'package:wireguard_dart_example/features/home/home_view.dart';
 
 class MyApp extends StatefulWidget {
   const MyApp({super.key});
