@@ -1,49 +1,56 @@
-import 'dart:async';
-
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:wireguard_dart_example/features/authscreen/auth_view.dart';
+import 'package:wireguard_dart_example/features/authscreen/state/auth_cubit.dart';
 import 'package:wireguard_dart_example/features/home/home_view.dart';
+import 'package:wireguard_dart_example/features/subscribe/subscribe_view.dart';
+import 'package:wireguard_dart_example/features/wrapper/wrapper_view.dart';
 
-class MyApp extends StatefulWidget {
-  const MyApp({super.key});
+class AppView extends StatefulWidget {
+  const AppView({super.key});
 
   @override
-  State<MyApp> createState() => _MyAppState();
+  State<AppView> createState() => _AppViewState();
 }
 
-class _MyAppState extends State<MyApp> {
-  String _platformVersion = 'Unknown';
+class _AppViewState extends State<AppView> {
+  late final Future _future;
+  var isAuthorized = false;
 
   @override
   void initState() {
+    _future = context.read<AuthCubit>().checkIsAuth();
     super.initState();
-    initPlatformState();
-  }
-
-  // Platform messages are asynchronous, so we initialize in an async method.
-  Future<void> initPlatformState() async {
-    String platformVersion;
-    // Platform messages may fail, so we use a try/catch PlatformException.
-    // We also handle the message potentially returning null.
-    try {
-      platformVersion = '';
-    } on PlatformException {
-      platformVersion = 'Failed to get platform version.';
-    }
-
-    // If the widget was removed from the tree while the asynchronous platform
-    // message was in flight, we want to discard the reply rather than calling
-    // setState to update our non-existent appearance.
-    if (!mounted) return;
-
-    setState(() {
-      _platformVersion = platformVersion;
-      debugPrint(_platformVersion);
-    });
   }
 
   @override
   Widget build(BuildContext context) {
-    return HomeView();
+    return Scaffold(
+      backgroundColor: Colors.transparent,
+      body: BlocBuilder<AuthCubit, AuthState>(
+        builder: (context, state) {
+          return FutureBuilder(
+            future: _future,
+            builder: (BuildContext context, snapshot) {
+              if (snapshot.connectionState == ConnectionState.waiting) {
+                return const WrapperView(
+                  child: Center(
+                    child: CircularProgressIndicator(),
+                  ),
+                );
+              }
+              if (state.isAuthorized) {
+                if (state.isSubscribed) {
+                  return HomeView();
+                } else {
+                  return SubscribeView();
+                }
+              }
+              return AuthView();
+            },
+          );
+        },
+      ),
+    );
   }
 }

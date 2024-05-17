@@ -23,7 +23,6 @@ void main() async {
         debugShowCheckedModeBanner: false,
         theme: theme(),
         routerConfig: router,
-        // initialRoute: '/',
         themeAnimationCurve: Curves.easeInOut,
         // routes: <String, WidgetBuilder>{
         //   '/': (BuildContext context) => const MyApp(),

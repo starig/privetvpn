@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:go_router/go_router.dart';
 import 'package:wireguard_dart/connection_status.dart';
 import 'package:wireguard_dart/wireguard_dart.dart';
 import 'package:wireguard_dart_example/config/colors.dart';
@@ -124,7 +125,7 @@ class _HomeViewState extends State<HomeView> {
                   title: SvgPicture.asset("assets/images/privetLogo.svg"),
                   leading: IconButton(
                     onPressed: () {
-                      Navigator.pushNamed(context, "/menu");
+                      context.go('/home/menu');
                     },
                     icon: SvgPicture.asset(
                       "assets/images/menu.svg",

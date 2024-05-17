@@ -11,6 +11,7 @@ class AppColors {
   static const Color redOrange = Color(0xFFFD4C00);
   static const Color circleBorder = Color(0xFFF2F2F2);
   static const Color circleBorderBold = Color(0xFFEBEBEB);
+  static const Color primaryGreen = Color(0xFF5AD52E);
 }
 
 class GradientColors {
