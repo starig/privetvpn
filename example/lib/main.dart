@@ -4,6 +4,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:wireguard_dart_example/config/theme.dart';
 import 'package:wireguard_dart_example/features/authscreen/state/auth_cubit.dart';
 import 'package:wireguard_dart_example/features/home/state/home_cubit.dart';
+import 'package:wireguard_dart_example/features/subscribe/state/subscribe_cubit.dart';
 import 'package:wireguard_dart_example/firebase_options.dart';
 import 'package:wireguard_dart_example/router.dart';
 
@@ -18,6 +19,7 @@ void main() async {
       providers: [
         BlocProvider(create: ((context) => HomeCubit())),
         BlocProvider(create: ((context) => AuthCubit())),
+        BlocProvider(create: ((context) => SubscribeCubit())),
       ],
       child: MaterialApp.router(
         debugShowCheckedModeBanner: false,
