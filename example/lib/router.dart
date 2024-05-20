@@ -4,6 +4,7 @@ import 'package:wireguard_dart_example/features/authscreen/auth_view.dart';
 import 'package:wireguard_dart_example/features/home/home_view.dart';
 import 'package:wireguard_dart_example/features/menu/menu_view.dart';
 import 'package:wireguard_dart_example/features/profile/profile_view.dart';
+import 'package:wireguard_dart_example/features/subscribe/subscribe_view.dart';
 
 final router = GoRouter(
   initialLocation: '/',
@@ -34,6 +35,10 @@ final router = GoRouter(
     GoRoute(
       path: '/auth',
       builder: (context, state) => AuthView(),
+    ),
+    GoRoute(
+      path: '/subscribe',
+      builder: (context, state) => SubscribeView(),
     ),
   ],
 );

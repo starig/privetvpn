@@ -1,9 +1,9 @@
 import 'dart:developer';
 
 import 'package:dio/dio.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:google_sign_in/google_sign_in.dart';
+import 'package:sign_in_with_apple/sign_in_with_apple.dart';
 import 'package:wireguard_dart_example/config/api.dart';
 import 'package:wireguard_dart_example/config/constants.dart';
 import 'package:wireguard_dart_example/config/storage.dart';
@@ -15,15 +15,17 @@ class AuthCubit extends Cubit<AuthState> {
       : super(AuthState(
           isAuthorized: false,
           isSubscribed: false,
+          uid: null,
         ));
 
   Future<void> logout() async {
     LocalStorage().storage.delete(key: StorageConstants().idToken);
-    emit(state.copyWith(isAuthorized: false));
+    state.uid = null;
+    emit(state.copyWith(isAuthorized: false, uid: state.uid));
   }
 
   Future<void> checkIsAuth() async {
-    final value = await LocalStorage().storage.read(key: StorageConstants().idToken);
+    final value = await LocalStorage().storage.read(key: StorageConstants().idToken) ?? state.uid;
     state.isAuthorized = value != null;
     await checkSubscribe();
     emit(state.copyWith(
@@ -33,7 +35,8 @@ class AuthCubit extends Cubit<AuthState> {
 
   Future<void> checkSubscribe() async {
     try {
-      final String? uid = await LocalStorage().storage.read(key: StorageConstants().idToken);
+      final String? uid =
+          await LocalStorage().storage.read(key: StorageConstants().idToken) ?? state.uid;
 
       Response response = await PrivetAPI().dio.get('$baseURL/checkSubscribe?uid=$uid');
       bool value = response.data['isValidLicense'];
@@ -43,6 +46,28 @@ class AuthCubit extends Cubit<AuthState> {
       ));
     } catch (e) {
       print(e);
+    }
+  }
+
+  signInWithApple() async {
+    try {
+      final credential = await SignInWithApple.getAppleIDCredential(
+        scopes: [
+          AppleIDAuthorizationScopes.email,
+          AppleIDAuthorizationScopes.fullName,
+        ],
+      );
+
+      if (credential.userIdentifier != null) {
+        state.uid = credential.userIdentifier;
+        emit(state.copyWith(uid: state.uid));
+        await LocalStorage()
+            .storage
+            .write(key: StorageConstants().idToken, value: credential.userIdentifier);
+        await checkIsAuth();
+      }
+    } catch (e) {
+      inspect(e);
     }
   }
 
@@ -59,27 +84,14 @@ class AuthCubit extends Cubit<AuthState> {
         // scopes: scopes,
       );
 
-      inspect(googleSignIn);
-
-      inspect(FirebaseAuth.instance);
       // Trigger the authentication flow
       final GoogleSignInAccount? googleUser = await googleSignIn.signIn();
-      inspect(googleUser);
       if (googleUser?.id != null) {
+        state.uid = googleUser!.id;
+        emit(state.copyWith(uid: state.uid));
         await LocalStorage().storage.write(key: StorageConstants().idToken, value: googleUser!.id);
-        checkIsAuth();
+        await checkIsAuth();
       }
-      // Obtain the auth details from the request
-      // final GoogleSignInAuthentication? googleAuth = await googleUser?.authentication;
-      //
-      // // Create a new credential
-      // final credential = GoogleAuthProvider.credential(
-      //   accessToken: googleAuth?.accessToken,
-      //   idToken: googleAuth?.idToken,
-      // );
-
-      // Once signed in, return the UserCredential
-      // return await FirebaseAuth.instance.signInWithCredential(credential);
     } catch (e) {
       inspect(e);
     }
