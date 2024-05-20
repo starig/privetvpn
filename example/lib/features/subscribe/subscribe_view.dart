@@ -1,5 +1,3 @@
-import 'dart:developer';
-
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -182,7 +180,6 @@ class SubscribeView extends StatelessWidget {
                         await LocalStorage().storage.read(key: StorageConstants().idToken);
                     Response response =
                         await PrivetAPI().dio.get("$baseURL/activatePromo?promo=$promo&uid=$uid");
-                    inspect(response);
                     await context.read<AuthCubit>().checkSubscribe();
                   } catch (e) {
                     print(e);
